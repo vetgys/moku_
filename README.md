@@ -1,22 +1,19 @@
-Реализация раздела ТЗ **"Обработка данных"**: извлечение сущностей и
+**"Обработка данных"**: извлечение сущностей и
 категоризация причин статусов заявлений из полусвободного текста
-`status_comment`. Категоризация — **только regex-правила**
+`status_comment`. Категоризация - **только regex-правила**. Оркестрация не реализована
 
 ## Быстрый старт
 
-```bash
-cp .env  
 docker compose up -d        
 pip install -r requirements.txt
 
-PYTHONPATH=pipeline python3 pipeline/load_source_csv.py data/moku_tech_task.csv
+$env:PYTHONPATH="pipeline"
+python pipeline/load_source_csv.py data/moku_tech_task.csv
 
-PYTHONPATH=pipeline python3 -c "
-from pg_loader import run_load
-print(run_load())
-"
-```
+python -c "from pg_loader import run_load print(run_load())"
 
+Для отображения категорий:
+docker compose exec postgres psql -h localhost -U vetgy -d moku_repos -c "SELECT reason_category_label, count(*) FROM application_status_enriched GROUP BY 1 ORDER BY 2 DESC LIMIT 15;"
 
 ## Схема данных
 
